@@ -157,7 +157,7 @@ func Netease(c *gin.Context) {
 
 	for i := range formatted {
 		if info, ok := urlMap[formatted[i].MusicID]; ok {
-			formatted[i].URL = info.URL
+			formatted[i].URL = replaceHTTPToHTTPS(info.URL, c.Query("tls"))
 			formatted[i].MD5 = info.MD5
 			formatted[i].Lrc = fmt.Sprintf("https://dev.moguq.top/lyric?id=%s", formatted[i].MusicID)
 		}
@@ -167,4 +167,11 @@ func Netease(c *gin.Context) {
 		"code": 200,
 		"data": formatted,
 	})
+}
+
+func replaceHTTPToHTTPS(input string, flag string) string {
+	if flag == "1" {
+		return strings.ReplaceAll(input, "http://", "https://")
+	}
+	return input
 }
