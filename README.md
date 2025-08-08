@@ -1,0 +1,2 @@
+# neteasePlaylistAPI
+neteasePlaylistAPI 利用NeteaseCloudMusicApi解析playlist并输出歌词/歌曲 搭配home项目使用
