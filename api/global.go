@@ -10,6 +10,7 @@ const (
 	APIPlaylist = "playlist/track/all"
 	APIMusic    = "song/url/v1"
 	APILrc      = "lyric"
+	DevPath     = "https://dev.moguq.top/"
 )
 
 type Song struct {

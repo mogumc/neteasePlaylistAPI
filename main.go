@@ -25,10 +25,13 @@ func main() {
 	r.GET("/favicon.ico", func(c *gin.Context) {
 		c.File("./static/favicon.ico")
 	})
+
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(200, "index.html", nil)
 	})
+
 	r.GET("/netease", api.Netease)
+	r.GET("/single", api.Single)
 	r.GET("/lyric", api.Lyric)
 	r.NoRoute(func(c *gin.Context) {
 		c.HTML(404, "404.html", nil)

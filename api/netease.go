@@ -55,6 +55,7 @@ func Netease(c *gin.Context) {
 
 	var formatted []Song
 	var ids []string
+	jump := c.Query("jump")
 
 	for _, raw := range rawSongs {
 		song, ok := raw.(map[string]interface{})
@@ -99,11 +100,21 @@ func Netease(c *gin.Context) {
 			MusicTitle:  titleName,
 			MusicCover:  picUrl,
 			MusicAuthor: artistName,
+			URL:         fmt.Sprintf("%ssingle?id=%s&jump=1", DevPath, strID),
+			MD5:         "",
+			Lrc:         fmt.Sprintf("%slyric?id=%s", DevPath, strID),
 		})
 		ids = append(ids, strID)
 	}
 
 	if len(ids) == 0 {
+		c.JSON(200, gin.H{
+			"code": 200,
+			"data": formatted,
+		})
+		return
+	}
+	if jump == "1" {
 		c.JSON(200, gin.H{
 			"code": 200,
 			"data": formatted,
@@ -170,7 +181,6 @@ func Netease(c *gin.Context) {
 		if info, ok := urlMap[formatted[i].MusicID]; ok {
 			formatted[i].URL = replaceHTTPToHTTPS(info.URL, c.Query("tls"))
 			formatted[i].MD5 = info.MD5
-			formatted[i].Lrc = fmt.Sprintf("https://dev.moguq.top/lyric?id=%s", formatted[i].MusicID)
 		}
 	}
 
