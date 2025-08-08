@@ -16,6 +16,8 @@ type Song struct {
 	MusicID     string `json:"id"`
 	MusicTitle  string `json:"title"`
 	MusicAuthor string `json:"author"`
+	MusicAlbum  string `json:"album"`
+	MusicCover  string `json:"cover,omitempty"`
 	URL         string `json:"url,omitempty"`
 	MD5         string `json:"md5,omitempty"`
 	Lrc         string `json:"lrc,omitempty"`

@@ -89,48 +89,89 @@ func mergeLyrics(lrc, tlyric string) string {
 	lrcLines := strings.Split(lrc, "\n")
 	tlyricLines := strings.Split(tlyric, "\n")
 
-	merged := ""
-	for i := 0; i < len(lrcLines) && i < len(tlyricLines); i++ {
-		if strings.HasPrefix(lrcLines[i], "[") && strings.HasPrefix(tlyricLines[i], "[") {
-			timeTag := parseTimeTag(lrcLines[i])
-			origin := parseLyricLine(lrcLines[i])
-			translate := parseLyricLine(tlyricLines[i])
-			if timeTag != "" {
-				merged += fmt.Sprintf("%s%s\n", timeTag, origin)
-				merged += fmt.Sprintf("%s%s\n", timeTag, translate)
-			}
+	tlyricMap := make(map[string]string)
+	for _, line := range tlyricLines {
+		tag := parseTimeTag(line)
+		text := parseLyricLine(line)
+		if tag != "" && text != "" {
+			tlyricMap[tag] = text
 		}
 	}
-	return merged
+
+	mergedTags := make(map[string]bool)
+	var builder strings.Builder
+
+	for _, line := range lrcLines {
+		tag := parseTimeTag(line)
+		if tag == "" {
+			continue
+		}
+		content := parseLyricLine(line)
+		if content == "" {
+			continue
+		}
+
+		builder.WriteString(fmt.Sprintf("%s %s\n", tag, content))
+
+		if trans, ok := tlyricMap[tag]; ok && trans != "" && !mergedTags[tag] {
+			builder.WriteString(fmt.Sprintf("%s %s\n", tag, trans))
+			mergedTags[tag] = true
+		}
+	}
+
+	return builder.String()
 }
 
 func parseTimeTag(line string) string {
-	idx := strings.Index(line, "]")
-	if idx == -1 || line[0] != '[' {
-		return ""
-	}
-	rawTag := line[:idx+1]
-
-	content := rawTag[1 : len(rawTag)-1]
-
-	parts := strings.Split(content, ":")
-	if len(parts) != 2 && len(parts) != 3 {
+	start := strings.Index(line, "[")
+	end := strings.Index(line, "]")
+	if start == -1 || end == -1 || end <= start {
 		return ""
 	}
 
-	if len(parts) == 3 {
-		mins := parts[0]
-		secs := parts[1]
-		hundredths := parts[2]
-		if len(hundredths) > 2 {
-			hundredths = hundredths[:2]
-		} else if len(hundredths) < 2 {
-			hundredths = hundredths + strings.Repeat("0", 2-len(hundredths))
+	raw := line[start+1 : end]
+
+	if strings.Count(raw, ":") >= 2 {
+		parts := strings.Split(raw, ":")
+		if len(parts) < 3 {
+			return ""
 		}
-		return fmt.Sprintf("[%s:%s.%s]", mins, secs, hundredths)
+		mm := parts[0]
+		ss := parts[1]
+		ff := parts[2]
+
+		mm = fmt.Sprintf("%02s", mm)
+		ss = fmt.Sprintf("%02s", ss)
+		ff = fmt.Sprintf("%02s", ff)
+
+		return fmt.Sprintf("[%s:%s.%s]", mm, ss, ff)
 	}
 
-	return rawTag
+	parts := strings.Split(raw, ":")
+	if len(parts) < 2 {
+		return ""
+	}
+
+	mm := parts[0]
+	ssAndRest := strings.Join(parts[1:], ":")
+
+	secParts := strings.Split(ssAndRest, ".")
+	ss := secParts[0]
+	ff := ""
+	if len(secParts) > 1 {
+		ff = secParts[1]
+	}
+
+	ff = fmt.Sprintf("%-2s", ff)
+	ff = strings.ReplaceAll(ff, " ", "0")
+	if len(ff) > 2 {
+		ff = ff[:2]
+	}
+
+	mm = fmt.Sprintf("%02s", mm)
+	ss = fmt.Sprintf("%02s", ss)
+
+	return fmt.Sprintf("[%s:%s.%s]", mm, ss, ff)
 }
 
 func parseLyricLine(line string) string {

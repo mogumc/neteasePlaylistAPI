@@ -77,16 +77,27 @@ func Netease(c *gin.Context) {
 			}
 		}
 
-		albumName := "未知歌曲"
+		albumName := "未知专辑"
+		picUrl := ""
 		if al, ok := song["al"].(map[string]interface{}); ok {
 			if name, ok := al["name"].(string); ok {
 				albumName = name
 			}
+			if cover, ok := al["picUrl"].(string); ok {
+				picUrl = cover
+			}
+		}
+
+		titleName := "未知歌曲"
+		if name, ok := song["name"].(string); ok {
+			titleName = name
 		}
 
 		formatted = append(formatted, Song{
 			MusicID:     strID,
-			MusicTitle:  albumName,
+			MusicAlbum:  albumName,
+			MusicTitle:  titleName,
+			MusicCover:  picUrl,
 			MusicAuthor: artistName,
 		})
 		ids = append(ids, strID)
