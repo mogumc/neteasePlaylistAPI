@@ -6,7 +6,7 @@ neteasePlaylistAPI 利用NeteaseCloudMusicApi解析playlist并输出歌词/歌�
 感谢 api.sayqz.com 提供NeteaseCloudMusicApi
 
 # Demo
-dev.moguq.top
-
+> API dev.moguq.top  
+> [蘑菇の音乐播放器](https://www.moguq.top/music)
 # License
 MIT License
