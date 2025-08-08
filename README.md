@@ -10,8 +10,14 @@ neteasePlaylistAPI 利用NeteaseCloudMusicApi解析playlist并输出歌词/歌�
 感谢 api.sayqz.com 提供NeteaseCloudMusicApi
 
 # Demo
-> API dev.moguq.top  
-> [蘑菇の音乐播放器](https://www.moguq.top/music)
+> [!WARNING]  
+> 稳定服务建议完整API都自行搭建而不是使用演示API  
+> 如果你要使用演示API用于生产环境请合理使用    
+> 如果使用过于频繁可能会被我们封禁  
+
+> API ``dev.moguq.top``  
+> 使用演示 [蘑菇の音乐播放器](https://www.moguq.top/music)
+
 
 # 免责声明
 本项目只作为前置API处理透过代理的官方API返回的数据  
