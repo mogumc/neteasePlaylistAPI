@@ -8,6 +8,18 @@ import (
 
 func main() {
 	r := gin.Default()
+	// 允许跨域
+	r.Use(gin.HandlerFunc(func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, cache-control, X-Requested-With")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+		c.Next()
+	}))
 	// 注册路由
 	r.LoadHTMLGlob("./static/*.html")
 	r.GET("/favicon.ico", func(c *gin.Context) {
