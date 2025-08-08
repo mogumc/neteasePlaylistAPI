@@ -55,6 +55,11 @@ func Single(c *gin.Context) {
 		return
 	}
 
+	tls := c.Query("tls")
+	if tls == "1" {
+		musicRes.Data[0].URL = replaceHTTPToHTTPS(musicRes.Data[0].URL, "1")
+	}
+
 	json := c.Query("json")
 	if json == "1" {
 		c.JSON(200, gin.H{

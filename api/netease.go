@@ -56,7 +56,10 @@ func Netease(c *gin.Context) {
 	var formatted []Song
 	var ids []string
 	jump := c.Query("jump")
-
+	tlstext := ""
+	if c.Query("tls") == "1" {
+		tlstext = "&tls=1"
+	}
 	for _, raw := range rawSongs {
 		song, ok := raw.(map[string]interface{})
 		if !ok {
@@ -100,7 +103,7 @@ func Netease(c *gin.Context) {
 			MusicTitle:  titleName,
 			MusicCover:  picUrl,
 			MusicAuthor: artistName,
-			URL:         fmt.Sprintf("%ssingle?id=%s&jump=1", DevPath, strID),
+			URL:         fmt.Sprintf("%ssingle?id=%s&jump=1%s", DevPath, strID, tlstext),
 			MD5:         "",
 			Lrc:         fmt.Sprintf("%slyric?id=%s", DevPath, strID),
 		})
