@@ -100,7 +100,21 @@ func Netease(c *gin.Context) {
 		return
 	}
 	fmt.Println("Fetching music URLs for IDs:", ids)
-	musicURL := fmt.Sprintf("%s%s?id=%s&level=standard", APIPath, APIMusic, strings.Join(ids, ","))
+	var level string
+	level_id := c.Query("level")
+	switch level_id {
+	case "1":
+		level = "higher"
+	case "2":
+		level = "lossless"
+	case "3":
+		level = "exhigh"
+	case "4":
+		level = "hires"
+	default:
+		level = "standard"
+	}
+	musicURL := fmt.Sprintf("%s%s?id=%s&level=%s", APIPath, APIMusic, strings.Join(ids, ","), level)
 	res2, err := fetchAPI(musicURL)
 	if err != nil {
 		c.JSON(500, gin.H{

@@ -106,10 +106,31 @@ func mergeLyrics(lrc, tlyric string) string {
 
 func parseTimeTag(line string) string {
 	idx := strings.Index(line, "]")
-	if idx > 0 && line[0] == '[' {
-		return line[:idx+1]
+	if idx == -1 || line[0] != '[' {
+		return ""
 	}
-	return ""
+	rawTag := line[:idx+1]
+
+	content := rawTag[1 : len(rawTag)-1]
+
+	parts := strings.Split(content, ":")
+	if len(parts) != 2 && len(parts) != 3 {
+		return ""
+	}
+
+	if len(parts) == 3 {
+		mins := parts[0]
+		secs := parts[1]
+		hundredths := parts[2]
+		if len(hundredths) > 2 {
+			hundredths = hundredths[:2]
+		} else if len(hundredths) < 2 {
+			hundredths = hundredths + strings.Repeat("0", 2-len(hundredths))
+		}
+		return fmt.Sprintf("[%s:%s.%s]", mins, secs, hundredths)
+	}
+
+	return rawTag
 }
 
 func parseLyricLine(line string) string {
