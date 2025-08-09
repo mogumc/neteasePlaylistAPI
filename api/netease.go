@@ -103,7 +103,7 @@ func Netease(c *gin.Context) {
 			MusicTitle:  titleName,
 			MusicCover:  picUrl,
 			MusicAuthor: artistName,
-			URL:         fmt.Sprintf("%ssingle?id=%s&jump=1%s", DevPath, strID, tlstext),
+			URL:         fmt.Sprintf("%ssingle?id=%s%s", DevPath, strID, tlstext),
 			MD5:         "",
 			Lrc:         fmt.Sprintf("%slyric?id=%s", DevPath, strID),
 		})
@@ -199,3 +199,4 @@ func replaceHTTPToHTTPS(input string, flag string) string {
 	}
 	return input
 }
+
