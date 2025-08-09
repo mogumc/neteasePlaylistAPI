@@ -1,8 +1,12 @@
 package api
 
 import (
+	"bytes"
+	"crypto/tls"
 	"io"
+	"log"
 	"net/http"
+	"time"
 )
 
 const (
@@ -24,17 +28,27 @@ type Song struct {
 	Lrc         string `json:"lrc,omitempty"`
 }
 
+var client = &http.Client{
+	CheckRedirect: func(req *http.Request, via []*http.Request) error {
+		return http.ErrUseLastResponse
+	},
+	Timeout: 15 * time.Second,
+	Transport: &http.Transport{
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true,
+		},
+	},
+}
+
 func fetchAPI(url string) ([]byte, error) {
-	resp, err := http.Get(url)
+	req, _ := http.NewRequest("GET", url, nil)
+	resp, err := client.Do(req)
+	body := new(bytes.Buffer)
 	if err != nil {
-		return nil, err
+		log.Println(err)
+	} else {
+		defer resp.Body.Close()
+		io.Copy(body, resp.Body)
 	}
-	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	return body, nil
+	return body.Bytes(), nil
 }
