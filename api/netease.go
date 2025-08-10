@@ -74,6 +74,10 @@ func Netease(c *gin.Context) {
 	if c.Query("tls") == "1" {
 		tlstext = "&tls=1"
 	}
+	leveltext := ""
+	if len(level_id) > 0 {
+		leveltext = fmt.Sprintf("&level=%s",level_id)
+	}  
 	for _, raw := range rawSongs {
 		song, ok := raw.(map[string]interface{})
 		if !ok {
@@ -117,7 +121,7 @@ func Netease(c *gin.Context) {
 			MusicTitle:  titleName,
 			MusicCover:  picUrl,
 			MusicAuthor: artistName,
-			URL:         fmt.Sprintf("%ssingle?id=%s&level=%s%s", DevPath, strID, level, tlstext),
+			URL:         fmt.Sprintf("%ssingle?id=%s%s%s", DevPath, strID, leveltext, tlstext),
 			MD5:         "",
 			Lrc:         fmt.Sprintf("%slyric?id=%s", DevPath, strID),
 		})
@@ -199,5 +203,6 @@ func replaceHTTPToHTTPS(input string, flag string) string {
 	}
 	return input
 }
+
 
 
