@@ -56,6 +56,20 @@ func Netease(c *gin.Context) {
 	var formatted []Song
 	var ids []string
 	jump := c.Query("jump")
+	var level string
+	level_id := c.Query("level")
+	switch level_id {
+	case "1":
+		level = "higher"
+	case "2":
+		level = "lossless"
+	case "3":
+		level = "exhigh"
+	case "4":
+		level = "hires"
+	default:
+		level = "standard"
+	}
 	tlstext := ""
 	if c.Query("tls") == "1" {
 		tlstext = "&tls=1"
@@ -103,7 +117,7 @@ func Netease(c *gin.Context) {
 			MusicTitle:  titleName,
 			MusicCover:  picUrl,
 			MusicAuthor: artistName,
-			URL:         fmt.Sprintf("%ssingle?id=%s%s", DevPath, strID, tlstext),
+			URL:         fmt.Sprintf("%ssingle?id=%s&level=%s%s", DevPath, strID, level, tlstext),
 			MD5:         "",
 			Lrc:         fmt.Sprintf("%slyric?id=%s", DevPath, strID),
 		})
@@ -125,20 +139,6 @@ func Netease(c *gin.Context) {
 		return
 	}
 	fmt.Println("Fetching music URLs for IDs:", ids)
-	var level string
-	level_id := c.Query("level")
-	switch level_id {
-	case "1":
-		level = "higher"
-	case "2":
-		level = "lossless"
-	case "3":
-		level = "exhigh"
-	case "4":
-		level = "hires"
-	default:
-		level = "standard"
-	}
 	musicURL := fmt.Sprintf("%s%s?id=%s&level=%s", APIPath, APIMusic, strings.Join(ids, ","), level)
 	res2, err := fetchAPI(musicURL)
 	if err != nil {
@@ -199,4 +199,5 @@ func replaceHTTPToHTTPS(input string, flag string) string {
 	}
 	return input
 }
+
 
