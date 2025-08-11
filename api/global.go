@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"crypto/tls"
 	"io"
-	"log"
 	"net/http"
 	"time"
 )
@@ -45,7 +44,7 @@ func fetchAPI(url string) ([]byte, error) {
 	resp, err := client.Do(req)
 	body := new(bytes.Buffer)
 	if err != nil {
-		log.Println(err)
+		return nil, err
 	} else {
 		defer resp.Body.Close()
 		io.Copy(body, resp.Body)
